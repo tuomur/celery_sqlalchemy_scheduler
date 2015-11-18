@@ -1,7 +1,8 @@
 # What
 
 This repo contains my modification of the Celery Database Scheduler from
-djcelery project. I've used it in production over a year now without problems.
+djcelery project. I've used it in production for over a year now without
+problems.
 
 
 ## How do I use this
@@ -12,3 +13,19 @@ in-memory SQLite database since I cannot assume anything.
 
 Finally, set `CELERYBEAT_SCHEDULER` to
 `yourproject.sqlalchemy_scheduler:DatabaseScheduler`.
+
+Adding and removing tasks is done with manipulating the SQLAlchemy models.
+
+```python
+dse = model.DatabaseSchedulerEntry()
+dse.name = 'Simple add task'
+dse.task = 'yourproject.tasks.add'
+dse.arguments = '[]'  # json string
+dse.keyword_arguments = '{}'  # json string
+
+# crontab defaults to run every minute
+dse.crontab = model.CrontabSchedule()
+
+dbsession.add(dse)
+dbsession.commit()
+```
